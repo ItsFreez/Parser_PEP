@@ -10,11 +10,12 @@ from tqdm import tqdm
 from configs import configure_argument_parser, configure_logging
 from constants import (BASE_DIR, DOWNLOADS_DIR, EXPECTED_STATUS,
                        MAIN_DOC_URL, PEP_DOC_URL)
-from exceptions import NotFoundVersionsException
+from exceptions import NotFoundVersionsException, ParserFindTagException
 from outputs import control_output
 from utils import get_soup, find_tag
 
 LOGGING_DOWNLOAD = 'Архив был загружен и сохранён: {0}'
+LOGGING_TAG = 'Возникла ошибка при поиске тега: {0}'
 LOGGING_URL = 'Не удалось получить информацию по ссылке: {0}'
 
 
@@ -27,21 +28,25 @@ def whats_new(session):
     sections_by_python = soup.select(
         '#what-s-new-in-python div.toctree-wrapper li.toctree-l1'
     )
-    missed_urls = ['Не удалось получить информацию со следующих ссылок:']
+    missed_data = []
     results = [('Ссылка на статью', 'Заголовок', 'Редактор, Автор')]
     for section in tqdm(sections_by_python):
         href = section.select_one('a')['href']
         version_link = urljoin(whats_new_url, href)
         soup = get_soup(session, version_link)
         if soup is None:
-            missed_urls.append(f'{version_link}')
+            missed_data.append(LOGGING_URL.format(version_link))
             continue
-        h1 = find_tag(soup, 'h1')
-        dl = find_tag(soup, 'dl')
+        try:
+            h1 = find_tag(soup, 'h1')
+            dl = find_tag(soup, 'dl')
+        except ParserFindTagException as exc:
+            missed_data.append(LOGGING_TAG.format(exc))
+            continue
         dl_text = dl.text.replace('\n', ' ')
         results.append((version_link, h1.text, dl_text))
-    if len(missed_urls) > 1:
-        logging.info('\n'.join(missed_urls))
+    if missed_data:
+        logging.info('\n'.join(missed_data))
     return results
 
 
@@ -99,17 +104,21 @@ def pep(session):
         return
     rows = soup.select('#numerical-index tbody tr')
     count_status = defaultdict(int)
-    missed_urls = ['Не удалось получить информацию со следующих ссылок:']
+    missed_data = []
     mismatched_status = ['Несовпадающие статусы:']
     for row in tqdm(rows):
-        preview_status = find_tag(row, 'abbr').text[1:]
-        href_pep = find_tag(row, 'a')['href']
-        link_pep = urljoin(PEP_DOC_URL, href_pep)
-        soup_pep = get_soup(session, link_pep)
-        if soup_pep is None:
-            missed_urls.append(f'{link_pep}')
+        try:
+            preview_status = find_tag(row, 'abbr').text[1:]
+            href_pep = find_tag(row, 'a')['href']
+            link_pep = urljoin(PEP_DOC_URL, href_pep)
+            soup_pep = get_soup(session, link_pep)
+            if soup_pep is None:
+                missed_data.append(f'{link_pep}')
+                continue
+            row_status = find_tag(soup_pep, 'dt', string='Status')
+        except ParserFindTagException as exc:
+            missed_data.append(LOGGING_TAG.format(exc))
             continue
-        row_status = find_tag(soup_pep, 'dt', string='Status')
         real_status = row_status.find_next_sibling('dd').text
         if real_status not in EXPECTED_STATUS[preview_status]:
             mismatched_status.extend(
@@ -118,8 +127,8 @@ def pep(session):
                  f'Ожидаемые статусы: {EXPECTED_STATUS[preview_status]}')
             )
         count_status[real_status] += 1
-    if len(missed_urls) > 1:
-        logging.info('\n'.join(missed_urls))
+    if missed_data:
+        logging.info('\n'.join(missed_data))
     if len(mismatched_status) > 1:
         logging.info('\n'.join(mismatched_status))
     return [
@@ -151,10 +160,6 @@ def main():
         results = MODE_TO_FUNCTION[parser_mode](session)
         if results is not None:
             control_output(results, args)
-    except NotFoundVersionsException as exc:
-        logging.exception(
-            'Возникла ошибка при поиске версий Python', exc_info=exc
-        )
     except Exception as exc:
         logging.exception('Возникла непредвиденная ошибка', exc_info=exc)
     logging.info('Парсер завершил работу.')
