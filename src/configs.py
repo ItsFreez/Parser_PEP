@@ -10,6 +10,7 @@ DT_FORMAT = '%d.%m.%Y %H:%M:%S'
 
 
 def configure_argument_parser(available_modes):
+    """Добавляет новые аргументы командной строки для парсера."""
     parser = argparse.ArgumentParser(description='Парсер документации Python')
     parser.add_argument(
         'mode',
@@ -32,6 +33,7 @@ def configure_argument_parser(available_modes):
 
 
 def configure_logging():
+    """Настраивает логирование для проекта."""
     LOG_DIR.mkdir(exist_ok=True)
     rotating_handler = RotatingFileHandler(
         LOG_FILE, maxBytes=10 ** 6, backupCount=5

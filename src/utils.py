@@ -7,6 +7,7 @@ from exceptions import ParserFindTagException
 
 
 def get_response(session, url):
+    """Получает ответ от запрошенного сайта."""
     try:
         response = session.get(url)
         response.encoding = 'utf-8'
@@ -19,6 +20,7 @@ def get_response(session, url):
 
 
 def get_soup(session, url):
+    """Формирует суп из полученного ответа сайта."""
     response = get_response(session, url)
     if response is None:
         return None
@@ -26,6 +28,7 @@ def get_soup(session, url):
 
 
 def find_tag(soup, tag, string=None, attrs=None):
+    """Выполняет поиск по указанному тэгу и атрибутам."""
     if string is not None:
         searched_tag = soup.find(
             lambda tag_search: tag_search.name == tag

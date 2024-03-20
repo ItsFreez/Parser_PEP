@@ -20,6 +20,7 @@ LOGGING_URL = 'Не удалось получить информацию по с
 
 
 def whats_new(session):
+    """Парсит нововведения в Python."""
     whats_new_url = urljoin(MAIN_DOC_URL, 'whatsnew/')
     soup = get_soup(session, whats_new_url)
     if soup is None:
@@ -51,6 +52,7 @@ def whats_new(session):
 
 
 def latest_versions(session):
+    """Парсит все актуальные версии Python."""
     soup = get_soup(session, MAIN_DOC_URL)
     if soup is None:
         logging.info(LOGGING_URL.format(MAIN_DOC_URL))
@@ -76,6 +78,7 @@ def latest_versions(session):
 
 
 def download(session):
+    """Скачивает архив с актуальной документацией на Python."""
     downloads_url = urljoin(MAIN_DOC_URL, 'download.html')
     soup = get_soup(session, downloads_url)
     if soup is None:
@@ -98,6 +101,7 @@ def download(session):
 
 
 def pep(session):
+    """Парсит все актуальные документы PEP."""
     soup = get_soup(session, PEP_DOC_URL)
     if soup is None:
         logging.info(LOGGING_URL.format(PEP_DOC_URL))
@@ -147,6 +151,7 @@ MODE_TO_FUNCTION = {
 
 
 def main():
+    """Основная функция, запускающая парсер."""
     try:
         configure_logging()
         logging.info('Парсер запущен!')

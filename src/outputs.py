@@ -8,6 +8,7 @@ from constants import BASE_DIR, DATETIME_FORMAT, FILE, PRETTY
 
 
 def control_output(results, cli_args):
+    """Функция определяет в каком формате вывести информацию."""
     output = cli_args.output
     if output == PRETTY:
         pretty_output(results)
@@ -18,11 +19,13 @@ def control_output(results, cli_args):
 
 
 def default_output(results):
+    """Дефолтный формат вывода информации в консоль."""
     for row in results:
         print(*row)
 
 
 def pretty_output(results):
+    """Табличный формат вывода информации в консоль."""
     table = PrettyTable()
     table.field_names = results[0]
     table.align = 'l'
@@ -31,6 +34,7 @@ def pretty_output(results):
 
 
 def file_output(results, cli_args):
+    """Вывод информации в файл csv."""
     results_dir = BASE_DIR / 'results'
     results_dir.mkdir(exist_ok=True)
     parser_mode = cli_args.mode
