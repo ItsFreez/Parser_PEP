@@ -1,7 +1,7 @@
-# Проект парсинга pep
+# Парсер PEP
 
 ## Описание
-Парсер предназначен для сбора информации о нововведениях Python, подсчета количества PEP и их статусов, а также для скачивания актуальной документации.
+**Парсер PEP** собирает информацию о нововведениях Python, подсчитывает количество PEP и их статусы, а также скачивает актуальную документацию.
 
 ### Функции парсера:
 
@@ -13,43 +13,43 @@
 * Логирование работы парсера;
 * Обработка ошибок в работе парсера.
 
-## Применяемые технологии
+## Стек технологий
 
-[![Python](https://img.shields.io/badge/Python-3.9-blue?style=flat-square&logo=Python&logoColor=3776AB&labelColor=d0d0d0)](https://www.python.org/)
-[![Beautiful Soup 4](https://img.shields.io/badge/BeautifulSoup-4.9.3-blue?style=flat-square&labelColor=d0d0d0)](https://beautiful-soup-4.readthedocs.io)
+![](https://img.shields.io/badge/Python-3.9-black?style=flat&logo=python)
+![](https://img.shields.io/badge/BeautifulSoup-4.9.3-black?style=flat&logo=beautifulsoup)
 
-### Порядок действий для запуска парсера
+## Порядок действий для запуска парсера
 
-Клонировать репозиторий и перейти в папку c проектом:
+***1. Клонировать репозиторий и перейти в папку c проектом***
 
-```
-git clone git@github.com:ItsFreez/bs4_parser_pep.git
-```
-
-```
-cd bs4_parser_pep
+```shell
+git git@github.com:ItsFreez/Parser_PEP.git
 ```
 
-Cоздать и активировать виртуальное окружение:
+```shell
+cd Parser_PEP
+```
+
+***2. Cоздать и активировать виртуальное окружение***
 
 *Для Windows*
-```
+```shell
 python -m venv env
 source venv/Scripts/Activate
 ```
 *Для MacOS/Linux*
-```
+```shell
 python3 -m venv env
 source env/bin/activate
 ```
 
-Обновить менеджер pip и установить зависимости из файла requirements.txt:
+***3. Обновить менеджер pip и установить зависимости из файла requirements.txt***
 
-```
+```shell
 python -m pip install --upgrade pip
 ```
 
-```
+```shell
 pip install -r requirements.txt
 ```
 
@@ -57,28 +57,28 @@ pip install -r requirements.txt
 
 ### Режимы работы
 Сбор ссылок на статьи о нововведениях в Python:
-```
+```shell
 python main.py whats-new
 ```
 Сбор информации о последних версиях Python:
-```
+```shell
 python main.py latest-versions
 ```
 Скачивание архива с актуальной документацией:
-```
+```shell
 python main.py download
 ```
 Сбор статусов PEP и подсчет их количества:
-```
+```shell
 python main.py pep
 ```
 
 ### Аргументы командной строки
 Полный список аргументов:
-```
+```shell
 python main.py -h
 ```
-```
+```shell
 usage: main.py [-h] [-c] [-o {pretty,file}] {whats-new,latest-versions,download,pep}
 
 Парсер документации Python
@@ -94,7 +94,11 @@ optional arguments:
                         Дополнительные способы вывода данных
 ```
 
-## Директории для файлов с результатами парсинга
+### Директории для файлов с результатами парсинга
 * _downloads_ - для архива с документацией Python;
 * _results_ - для результатов парсинга;
 * _logs_ - для логов.
+
+### Автор проекта
+
+[ItsFreez](https://github.com/ItsFreez)
